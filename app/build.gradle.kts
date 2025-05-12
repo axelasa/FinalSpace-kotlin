@@ -48,6 +48,8 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.converter.gson)
     implementation(libs.retrofit)
+    implementation(libs.runtime.livedata)
+    implementation(libs.coil.compose)
     runtimeOnly(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
