@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.runtime.livedata)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.foundation)
     runtimeOnly(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
