@@ -14,7 +14,7 @@ import retrofit2.http.GET
 
 interface Characters {
     @GET(allCharacters)
-    suspend fun getAllCharacters():Response<GetAllCharactersItem>
+    suspend fun getAllCharacters():Response<GetAllCharacters>
 }
 
 interface Episodes{
