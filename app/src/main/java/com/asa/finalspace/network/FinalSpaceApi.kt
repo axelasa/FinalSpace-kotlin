@@ -19,15 +19,15 @@ interface Characters {
 
 interface Episodes{
     @GET(allEpisodes)
-    suspend fun getAllEpisodes():Response<GetAllEpisodesItem>
+    suspend fun getAllEpisodes():Response<GetAllEpisodes>
 }
 
 interface Locations{
     @GET(allLocations)
-    suspend fun getAllLocations():Response<GetAllLocationsItem>
+    suspend fun getAllLocations():Response<GetAllLocations>
 }
 
 interface Quotes{
     @GET(allLQuotes)
-    suspend fun  getAllQuotes():Response<GetAllEpisodesItem>
+    suspend fun  getAllQuotes():Response<GetAllEpisodes>
 }

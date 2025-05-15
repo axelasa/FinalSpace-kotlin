@@ -7,13 +7,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,12 +25,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,25 +41,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.asa.finalspace.network.HttpClient
 import com.asa.finalspace.network.HttpClient.allCharactersService
 import com.asa.finalspace.repository.AllCharactersRepositoryImpl
 import com.asa.finalspace.ui.theme.FinalSpaceTheme
 import com.asa.finalspace.viewmodel.AllCharactersViewModel
-import com.asa.finalspace.viewmodel.ModelSate
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.asa.finalspace.model.characters.GetAllCharactersItem
+import com.asa.finalspace.repository.AllEpisodesRepository
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.runtime.remember
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.asa.finalspace.network.HttpClient
+import com.asa.finalspace.network.HttpClient.allEpisodesService
+import com.asa.finalspace.repository.AllEpisodesRepositoryImpl
+import com.asa.finalspace.routes.NavItems
 import com.asa.finalspace.routes.Routes
+import com.asa.finalspace.ui.AllEpisodes
+import com.asa.finalspace.ui.CharacterDetails
+import com.asa.finalspace.ui.EpisodeDetails
+//import com.asa.finalspace.ui.EpisodesActivity
+import com.asa.finalspace.viewmodel.AllEpisodesViewModel
 
 class MainActivity : ComponentActivity() {
-    lateinit var allCharactersViewModel: AllCharactersViewModel
+    private lateinit var allCharactersViewModel: AllCharactersViewModel
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,127 +80,173 @@ class MainActivity : ComponentActivity() {
             application = application,
             allCharactersRepository = AllCharactersRepositoryImpl(allCharactersService = allCharactersService)
         )
-        allCharactersViewModel.toastMessage.observe(this){
+        allCharactersViewModel.toastMessage.observe(this) {
             println("HERE IS THE ERROR  $it")
 
-            Toast.makeText(this,it,Toast.LENGTH_LONG).show()
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         }
 
-        setContent{
+        setContent {
             FinalSpaceTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
                     AppNavigation(
-                        viewModel = allCharactersViewModel
+                        viewModel = allCharactersViewModel,
                     )
                 }
 
             }
         }
-
-//        setContent {
-//            FinalSpaceTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) {
-//
-////                    Greeting(
-////                        name = "Android",
-////                        modifier = Modifier.padding(innerPadding)
-////                    )
-////                    ShowData(
-////                        viewModel = allCharactersViewModel,
-////                        modifier = Modifier.padding(innerPadding)
-////                    )
-//                }
-//            }
-//        }
-    }
-}
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-
-@Composable
-fun ShowData(viewModel: AllCharactersViewModel, modifier: Modifier = Modifier) {
-    val characterList by viewModel.characterList.observeAsState(emptyList())
-    println(
-        "I have been called"
-    )
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 14.dp, bottom = 14.dp, start = 14.dp)
-    ) {
-        //var columns =2
-//        println(
-//            "I have been called"
-//        )
-        items(characterList) { character ->
-            println(
-                "I have been called"
-            )
-            var name:String = ""
-            var image:String = ""
-            name = character.name
-            image = character.img_url
-
-//            println(
-//                "HERE IS THE NAME $name"
-//            )
-
-//            Image(
-//                painter = rememberAsyncImagePainter(image),
-//                contentDescription = name,
-//                modifier = Modifier.size(120.dp),
-//                contentScale = ContentScale.Crop
-//            )
-//
-//            Box(modifier = Modifier.size(10.dp))
-//
-//            Text( text = name )
-//            Box(modifier = Modifier.size(10.dp))
-
-        }
     }
 }
 
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun AppNavigation(viewModel:AllCharactersViewModel){
+fun AppNavigation(viewModel: AllCharactersViewModel) {
 
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Routes.CHARACTER_LIST,
-
-    ){
-        composable(Routes.CHARACTER_LIST){
-            CharactersGridView(
-                viewModel = viewModel, modifier = Modifier.padding(all = 8.dp),
-               onCharacterClick = {character-> navController.navigate(Routes.characterDetailsRoute(character.id))
-               }
-            )
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(navController)
         }
-        composable(route = Routes.CHARACTER_DETAILS, arguments = Routes.characterDetailsArguments) { backStackEntry ->
-            val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
-            CharacterDetails(
-                characterId = characterId,
-                viewmodel = viewModel,
-                navController = navController,
+    ) { contentPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Routes.CHARACTER_LIST,
+            modifier = Modifier.padding(contentPadding)  // Apply padding here
+        ) {
+            composable(Routes.CHARACTER_LIST) {
+                CharactersGridView(
+                    viewModel = viewModel,
+                    modifier = Modifier.padding(all = 8.dp),
+                    onCharacterClick = { character ->
+                        navController.navigate(Routes.characterDetailsRoute(character.id))
+                    }
+                )
+            }
+            composable(route = Routes.EPISODES_SCREEN) {
+                val episodesViewModel = remember {
+                    AllEpisodesViewModel(
+                        application = Application(),
+                        allEpisodesRepository = AllEpisodesRepositoryImpl(allEpisodesService = allEpisodesService)
+                    )
+                }
+                AllEpisodes(
+                    viewModel = episodesViewModel,
+                    modifier = Modifier.fillMaxSize(),
+                    onEpisodeClick = { episode ->
+                        navController.navigate(Routes.episodeDetailsRoute(episode.id))
+                    }
+                )
+            }
+            composable(
+                route = Routes.CHARACTER_DETAILS,
+                arguments = Routes.characterDetailsArguments
+            ) { backStackEntry ->
+                val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
+                CharacterDetails(
+                    characterId = characterId,
+                    viewmodel = viewModel,
+                    navController = navController,
+                )
+            }
+            composable(
+                route = Routes.EPISODE_DETAILS,
+                arguments = Routes.episodeDetailsArguments
             )
+            { backStackEntry ->
+                val episodeId = backStackEntry.arguments?.getInt("episodeId") ?: 0
+                val episodesViewModel = remember {
+                    AllEpisodesViewModel(
+                        application = Application(),
+                        allEpisodesRepository = AllEpisodesRepositoryImpl(allEpisodesService = allEpisodesService)
+                    )
+                }
+                EpisodeDetails(
+                    episodeId = episodeId,
+                    viewmodel = episodesViewModel,
+                    navController = navController
+                )
+            }
         }
     }
+//}
+
+//    NavHost(
+//        navController = navController,
+//        startDestination = Routes.CHARACTER_LIST,
+//
+//        ) {
+//        composable(Routes.CHARACTER_LIST) {
+//            CharactersGridView(
+//                viewModel = viewModel, modifier = Modifier.padding(all = 8.dp),
+//                onCharacterClick = { character ->
+//                    navController.navigate(Routes.characterDetailsRoute(character.id))
+//                }
+//            )
+//        }
+//        composable(
+//            route = Routes.CHARACTER_DETAILS,
+//            arguments = Routes.characterDetailsArguments
+//        ) { backStackEntry ->
+//            val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
+//            CharacterDetails(
+//                characterId = characterId,
+//                viewmodel = viewModel,
+//                navController = navController,
+//            )
+//        }
+//    }
 
 }
 
 @Composable
-fun CharactersGridView(viewModel: AllCharactersViewModel,modifier: Modifier, onCharacterClick: (GetAllCharactersItem) -> Unit) {
+fun BottomNavBar(navController: NavController) {
+    val items = listOf(
+        NavItems(
+            title = "HOME",
+            icon = Icons.Default.Face,
+            route = Routes.CHARACTER_LIST
+        ),
+        NavItems(
+            title = "EPISODES",
+            icon = Icons.Default.PlayArrow,
+            route = Routes.EPISODES_SCREEN
+        ),
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    NavigationBar {
+        items.forEach { item ->
+            NavigationBarItem(
+                icon = { (Icon(item.icon, contentDescription = item.title)) },
+                label = { Text(item.title) },
+                selected = currentRoute == item.route,
+                onClick = {
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+
+        }
+    }
+}
+
+@Composable
+fun CharactersGridView(
+    viewModel: AllCharactersViewModel,
+    modifier: Modifier,
+    onCharacterClick: (GetAllCharactersItem) -> Unit
+) {
     val characterList by viewModel.characterList.observeAsState(emptyList())
-    val columns =2
+    val columns = 2
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),
@@ -206,13 +261,14 @@ fun CharactersGridView(viewModel: AllCharactersViewModel,modifier: Modifier, onC
                 onClick = { onCharacterClick(character) }
             )
 
-            }
+        }
 
     }
 }
 
 @Composable
-fun GridItem(character: GetAllCharactersItem,onClick: () -> Unit
+fun GridItem(
+    character: GetAllCharactersItem, onClick: () -> Unit
 ) {
     val image = character.img_url
     val name = character.name
@@ -222,7 +278,7 @@ fun GridItem(character: GetAllCharactersItem,onClick: () -> Unit
             .fillMaxWidth()
             .aspectRatio(0.8f)// Slightly taller cards
             .padding(8.dp)
-           .clickable{onClick()},
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -237,10 +293,10 @@ fun GridItem(character: GetAllCharactersItem,onClick: () -> Unit
             AsyncImage(
                 model = image,
                 contentDescription = name,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(130.dp)
-                    .clip(RoundedCornerShape(50,),), // Circular image
+                    .clip(RoundedCornerShape(50)), // Circular image
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -253,7 +309,6 @@ fun GridItem(character: GetAllCharactersItem,onClick: () -> Unit
         }
     }
 }
-
 
 
 //@Preview(showBackground = true)
