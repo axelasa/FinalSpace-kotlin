@@ -29,6 +29,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.asa.finalspace.model.episodes.GetAllEpisodesItem
@@ -45,19 +47,33 @@ fun AllEpisodes(
     val episodeList by viewModel.episodeList.observeAsState(emptyList())
     val columns = 2
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
+    Column(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    )  {
-        items(episodeList){ episode ->
-            GridItem(
-                episode = episode,
-                onClick = { onEpisodeClick(episode)}
-            )
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Title for the locations
+        Text(
+            text = "Final Space Episodes",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        )  {
+            items(episodeList){ episode ->
+                GridItem(
+                    episode = episode,
+                    onClick = { onEpisodeClick(episode)}
+                )
+            }
         }
+
     }
 }
 
@@ -69,7 +85,7 @@ fun GridItem(episode:GetAllEpisodesItem,onClick:() -> Unit){
 
     Box(modifier = Modifier
         .fillMaxWidth()
-        .aspectRatio(0.7f)
+        .aspectRatio(0.89f)
         .padding(8.dp)
         .clickable{ onClick() },
 
@@ -87,7 +103,7 @@ fun GridItem(episode:GetAllEpisodesItem,onClick:() -> Unit){
                 contentDescription = chapter,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(230.dp)
                     .clip(shape = RoundedCornerShape(20)),
                 placeholder = ColorPainter(Color.Gray),
                 error = ColorPainter(Color.Red),

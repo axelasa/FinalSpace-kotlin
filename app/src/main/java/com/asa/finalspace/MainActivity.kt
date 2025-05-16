@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,14 +61,19 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.asa.finalspace.network.HttpClient
 import com.asa.finalspace.network.HttpClient.allEpisodesService
+import com.asa.finalspace.network.HttpClient.allLocationsService
 import com.asa.finalspace.repository.AllEpisodesRepositoryImpl
+import com.asa.finalspace.repository.AllLocationsRepository
+import com.asa.finalspace.repository.AllLocationsRepositoryImpl
 import com.asa.finalspace.routes.NavItems
 import com.asa.finalspace.routes.Routes
 import com.asa.finalspace.ui.AllEpisodes
+import com.asa.finalspace.ui.AllLocations
 import com.asa.finalspace.ui.CharacterDetails
 import com.asa.finalspace.ui.EpisodeDetails
 //import com.asa.finalspace.ui.EpisodesActivity
 import com.asa.finalspace.viewmodel.AllEpisodesViewModel
+import com.asa.finalspace.viewmodel.AllLocationsViewModel
 
 class MainActivity : ComponentActivity() {
     private lateinit var allCharactersViewModel: AllCharactersViewModel
@@ -140,6 +146,20 @@ fun AppNavigation(viewModel: AllCharactersViewModel) {
                     }
                 )
             }
+            composable(route = Routes.ALL_LOCATIONS) {
+                val locationsViewModel = remember {
+                    AllLocationsViewModel(
+                        application = Application(),
+                        allLocationsRepository = AllLocationsRepositoryImpl(allLocationService = allLocationsService)                    )
+                }
+                AllLocations(
+                    viewModel = locationsViewModel,
+                    modifier = Modifier.fillMaxSize(),
+                    onLocationClick = { location ->
+                        navController.navigate(Routes.locationDetailsRoute(location.id))
+                    }
+                )
+            }
             composable(
                 route = Routes.CHARACTER_DETAILS,
                 arguments = Routes.characterDetailsArguments
@@ -171,34 +191,6 @@ fun AppNavigation(viewModel: AllCharactersViewModel) {
             }
         }
     }
-//}
-
-//    NavHost(
-//        navController = navController,
-//        startDestination = Routes.CHARACTER_LIST,
-//
-//        ) {
-//        composable(Routes.CHARACTER_LIST) {
-//            CharactersGridView(
-//                viewModel = viewModel, modifier = Modifier.padding(all = 8.dp),
-//                onCharacterClick = { character ->
-//                    navController.navigate(Routes.characterDetailsRoute(character.id))
-//                }
-//            )
-//        }
-//        composable(
-//            route = Routes.CHARACTER_DETAILS,
-//            arguments = Routes.characterDetailsArguments
-//        ) { backStackEntry ->
-//            val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
-//            CharacterDetails(
-//                characterId = characterId,
-//                viewmodel = viewModel,
-//                navController = navController,
-//            )
-//        }
-//    }
-
 }
 
 @Composable
@@ -213,6 +205,11 @@ fun BottomNavBar(navController: NavController) {
             title = "EPISODES",
             icon = Icons.Default.PlayArrow,
             route = Routes.EPISODES_SCREEN
+        ),
+        NavItems(
+            title = "LOCATIONS",
+            icon = Icons.Default.LocationOn,
+            route = Routes.ALL_LOCATIONS
         ),
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
