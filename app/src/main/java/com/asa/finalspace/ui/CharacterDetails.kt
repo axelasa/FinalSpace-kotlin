@@ -1,4 +1,4 @@
-package com.asa.finalspace
+package com.asa.finalspace.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -28,12 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.asa.finalspace.viewmodel.AllCharactersViewModel
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import okhttp3.internal.wait
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -57,7 +56,7 @@ fun CharacterDetails(
                     navController.navigateUp()
                 }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
@@ -97,10 +96,6 @@ fun CharacterDetails(
                     CharacterDetailItem(label = "Gender", value = it.gender)
                     CharacterDetailItem(label = "Origin", value = it.origin)
                     it.alias.let { alias ->
-                        var ali:String =""
-                        for(a in alias){
-                           ali = a.toString()
-                        }
                         CharacterDetailItem(label = "Alias", value = alias.joinToString("\n"))
                     }
 

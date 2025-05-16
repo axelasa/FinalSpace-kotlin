@@ -9,6 +9,7 @@ import com.asa.finalspace.model.episodes.GetAllEpisodes
 import com.asa.finalspace.model.episodes.GetAllEpisodesItem
 import com.asa.finalspace.model.locations.GetAllLocations
 import com.asa.finalspace.model.locations.GetAllLocationsItem
+import com.asa.finalspace.model.quotes.GetAllQuotes
 import retrofit2.Response
 import retrofit2.http.GET
 
@@ -19,15 +20,15 @@ interface Characters {
 
 interface Episodes{
     @GET(allEpisodes)
-    suspend fun getAllEpisodes():Response<GetAllEpisodesItem>
+    suspend fun getAllEpisodes():Response<GetAllEpisodes>
 }
 
 interface Locations{
     @GET(allLocations)
-    suspend fun getAllLocations():Response<GetAllLocationsItem>
+    suspend fun getAllLocations():Response<GetAllLocations>
 }
 
 interface Quotes{
     @GET(allLQuotes)
-    suspend fun  getAllQuotes():Response<GetAllEpisodesItem>
+    suspend fun  getAllQuotes():Response<GetAllQuotes>
 }
