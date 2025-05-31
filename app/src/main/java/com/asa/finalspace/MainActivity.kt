@@ -62,6 +62,7 @@ import com.asa.finalspace.ui.AllEpisodes
 import com.asa.finalspace.ui.AllLocations
 import com.asa.finalspace.ui.CharacterDetails
 import com.asa.finalspace.ui.EpisodeDetails
+import com.asa.finalspace.ui.theme.FinalSpaceTheme
 import com.asa.finalspace.viewmodel.AllEpisodesViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -82,20 +83,16 @@ class MainActivity : ComponentActivity() {
 //            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         //}
 
-        setContent {
-            AppNavigation()
-        }
 
-        /*setContent {
+        setContent {
             FinalSpaceTheme {
-             FinalSpaceApplication {
                  Scaffold(modifier = Modifier.fillMaxSize()) {
                      AppNavigation()
                  }
-             }
+
 
             }
-        }*/
+        }
     }
 }
 
