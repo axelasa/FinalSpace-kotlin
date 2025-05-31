@@ -18,14 +18,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.PlayArrow
@@ -38,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,16 +52,15 @@ import com.asa.finalspace.ui.theme.FinalSpaceTheme
 import com.asa.finalspace.viewmodel.AllCharactersViewModel
 import coil.compose.AsyncImage
 import com.asa.finalspace.model.characters.GetAllCharactersItem
-import com.asa.finalspace.repository.AllEpisodesRepository
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.asa.finalspace.network.HttpClient
 import com.asa.finalspace.network.HttpClient.allEpisodesService
 import com.asa.finalspace.network.HttpClient.allLocationsService
 import com.asa.finalspace.repository.AllEpisodesRepositoryImpl
-import com.asa.finalspace.repository.AllLocationsRepository
 import com.asa.finalspace.repository.AllLocationsRepositoryImpl
 import com.asa.finalspace.routes.NavItems
 import com.asa.finalspace.routes.Routes
@@ -71,33 +68,35 @@ import com.asa.finalspace.ui.AllEpisodes
 import com.asa.finalspace.ui.AllLocations
 import com.asa.finalspace.ui.CharacterDetails
 import com.asa.finalspace.ui.EpisodeDetails
+import com.asa.finalspace.ui.FinalSpaceApplication
 import com.asa.finalspace.viewmodel.AllEpisodesViewModel
 import com.asa.finalspace.viewmodel.AllLocationsViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
-    private lateinit var allCharactersViewModel: AllCharactersViewModel
+    //private lateinit var allCharactersViewModel: AllCharactersViewModel
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        allCharactersViewModel = AllCharactersViewModel(
-            application = application,
-            allCharactersRepository = AllCharactersRepositoryImpl(allCharactersService = allCharactersService)
-        )
-        allCharactersViewModel.toastMessage.observe(this) {
-            println("HERE IS THE ERROR  $it")
-
-            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-        }
+//        allCharactersViewModel = AllCharactersViewModel(
+//            application = application,
+//            allCharactersRepository = AllCharactersRepositoryImpl(allCharactersService = allCharactersService)
+//        )
+//        allCharactersViewModel.toastMessage.observe(this) {
+//            println("HERE IS THE ERROR  $it")
+//
+//            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+        //}
 
         setContent {
             FinalSpaceTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(
-                        viewModel = allCharactersViewModel,
-                    )
-                }
+             FinalSpaceApplication {
+                 Scaffold(modifier = Modifier.fillMaxSize()) {
+                     AppNavigation()
+                 }
+             }
 
             }
         }
@@ -107,10 +106,9 @@ class MainActivity : ComponentActivity() {
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun AppNavigation(viewModel: AllCharactersViewModel) {
-
+fun AppNavigation() {
     val navController = rememberNavController()
-
+    val context = LocalContext.current
     Scaffold(
         bottomBar = {
             BottomNavBar(navController)
@@ -122,6 +120,13 @@ fun AppNavigation(viewModel: AllCharactersViewModel) {
             modifier = Modifier.padding(contentPadding)  // Apply padding here
         ) {
             composable(Routes.CHARACTER_LIST) {
+                val viewModel: AllCharactersViewModel = koinViewModel()
+                val toastMessage by viewModel.toastMessage.collectAsState()
+                LaunchedEffect(toastMessage) {
+                    toastMessage?.let {
+                        Toast.makeText(context,it,Toast.LENGTH_LONG).show()
+                    }
+                }
                 CharactersGridView(
                     viewModel = viewModel,
                     modifier = Modifier.padding(all = 8.dp),
@@ -131,14 +136,13 @@ fun AppNavigation(viewModel: AllCharactersViewModel) {
                 )
             }
             composable(route = Routes.EPISODES_SCREEN) {
-                val episodesViewModel = remember {
-                    AllEpisodesViewModel(
-                        application = Application(),
-                        allEpisodesRepository = AllEpisodesRepositoryImpl(allEpisodesService = allEpisodesService)
-                    )
-                }
+//                val episodesViewModel = remember {
+//                    AllEpisodesViewModel(
+//                        application = Application(),
+//                        allEpisodesRepository = AllEpisodesRepositoryImpl(allEpisodesService = allEpisodesService)
+//                    )
+//                }
                 AllEpisodes(
-                    viewModel = episodesViewModel,
                     modifier = Modifier.fillMaxSize(),
                     onEpisodeClick = { episode ->
                         navController.navigate(Routes.episodeDetailsRoute(episode.id))
@@ -146,13 +150,12 @@ fun AppNavigation(viewModel: AllCharactersViewModel) {
                 )
             }
             composable(route = Routes.ALL_LOCATIONS) {
-                val locationsViewModel = remember {
-                    AllLocationsViewModel(
-                        application = Application(),
-                        allLocationsRepository = AllLocationsRepositoryImpl(allLocationService = allLocationsService)                    )
-                }
+//                val locationsViewModel = remember {
+//                    AllLocationsViewModel(
+//                        application = Application(),
+//                        allLocationsRepository = AllLocationsRepositoryImpl(allLocationService = allLocationsService)                    )
+//                }
                 AllLocations(
-                    viewModel = locationsViewModel,
                     modifier = Modifier.fillMaxSize(),
                     onLocationClick = { location ->
                         navController.navigate(Routes.locationDetailsRoute(location.id))
@@ -166,7 +169,6 @@ fun AppNavigation(viewModel: AllCharactersViewModel) {
                 val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
                 CharacterDetails(
                     characterId = characterId,
-                    viewmodel = viewModel,
                     navController = navController,
                 )
             }
@@ -237,11 +239,11 @@ fun BottomNavBar(navController: NavController) {
 
 @Composable
 fun CharactersGridView(
-    viewModel: AllCharactersViewModel,
+    viewModel: AllCharactersViewModel= koinViewModel(),
     modifier: Modifier,
     onCharacterClick: (GetAllCharactersItem) -> Unit
 ) {
-    val characterList by viewModel.characterList.observeAsState(emptyList())
+    val characterList by viewModel.characterList.collectAsState(emptyList())
     val columns = 2
 
     LazyVerticalGrid(

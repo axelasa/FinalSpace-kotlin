@@ -36,14 +36,15 @@ import coil.compose.AsyncImage
 import com.asa.finalspace.model.episodes.GetAllEpisodesItem
 import com.asa.finalspace.utill.ensureHttps
 import com.asa.finalspace.viewmodel.AllEpisodesViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AllEpisodes(
-    viewModel: AllEpisodesViewModel,
     modifier: Modifier,
     onEpisodeClick: (GetAllEpisodesItem) -> Unit
 ) {
+    val viewModel: AllEpisodesViewModel = koinViewModel()
     val episodeList by viewModel.episodeList.observeAsState(emptyList())
     val columns = 2
 

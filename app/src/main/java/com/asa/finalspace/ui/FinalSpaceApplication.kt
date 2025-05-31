@@ -1,24 +1,63 @@
 package com.asa.finalspace.ui
 
 import android.app.Application
+import androidx.compose.runtime.Composable
 import com.asa.finalspace.network.HttpClient.allCharactersService
 import com.asa.finalspace.network.HttpClient.allEpisodesService
 import com.asa.finalspace.network.HttpClient.allLocationsService
+import com.asa.finalspace.repository.AllCharacterRepository
 import com.asa.finalspace.repository.AllCharactersRepositoryImpl
+import com.asa.finalspace.repository.AllEpisodesRepository
 import com.asa.finalspace.repository.AllLocationsRepositoryImpl
 import com.asa.finalspace.repository.AllEpisodesRepositoryImpl
+import com.asa.finalspace.repository.AllLocationsRepository
 import com.asa.finalspace.viewmodel.AllCharactersViewModel
 import com.asa.finalspace.viewmodel.AllEpisodesViewModel
 import com.asa.finalspace.viewmodel.AllLocationsViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
+val apiModule = module {
+    single { allCharactersService }
+    single { allLocationsService }
+    single { allEpisodesService }
+}
+val repositoryModule= module {
+    single<AllCharacterRepository> { AllCharactersRepositoryImpl (get()) }
+    single <AllLocationsRepository>{ AllLocationsRepositoryImpl (get()) }
+    single < AllEpisodesRepository>{ AllEpisodesRepositoryImpl (get()) }
+}
+val viewModelModule = module {
+    viewModelOf(::AllCharactersViewModel)
+    viewModelOf(::AllLocationsViewModel)
+    viewModelOf(::AllEpisodesViewModel)
+}
+
+
+class FinalSpaceApplication(function: @Composable () -> Unit) : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        startKoin {
+            androidContext(this@FinalSpaceApplication)
+            modules(
+                apiModule,
+                repositoryModule,
+                viewModelModule
+            )
+        }
+    }
+}
+
+/*
 class FinalSpaceApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
+
+        */
+/*startKoin {
             val appModule = module {
                 single { allCharactersService }
                 single { allLocationsService }
@@ -74,6 +113,7 @@ class FinalSpaceApplication : Application() {
 //                    singleOf( ::AllEpisodesRepositoryImpl )
 //                }
 //            )
-        }
+        }*//*
+
     }
-}
+}*/

@@ -29,19 +29,21 @@ import com.asa.finalspace.viewmodel.AllCharactersViewModel
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CharacterDetails(
     characterId: Int,
-    viewmodel: AllCharactersViewModel,
     navController: NavController
 ) {
-    val characterList by viewmodel.characterList.observeAsState(emptyList())
+    val viewmodel: AllCharactersViewModel = koinViewModel()
+    val characterList by viewmodel.characterList.collectAsState(emptyList())
     val character = characterList.find { it.id == characterId }
 
     Scaffold {

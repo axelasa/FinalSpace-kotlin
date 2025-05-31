@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.asa.finalspace.model.characters.GetAllCharacters
 import com.asa.finalspace.model.characters.GetAllCharactersItem
@@ -12,14 +13,17 @@ import com.asa.finalspace.model.dto_model.TaskResults
 import com.asa.finalspace.model.dto_model.TaskSuccess
 import com.asa.finalspace.repository.AllCharacterRepository
 import com.asa.finalspace.toGetAllCharactersItem
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AllCharactersViewModel(application: Application,private val allCharactersRepository: AllCharacterRepository):AndroidViewModel(application) {
+class AllCharactersViewModel(private val allCharactersRepository: AllCharacterRepository): ViewModel() {
 
-    private val _characterList = MutableLiveData<GetAllCharacters>()
-    val characterList : LiveData<GetAllCharacters> =_characterList
-    private val  _toastMessage =MutableLiveData<String>()
-    val toastMessage :LiveData<String> = _toastMessage
+    private val _characterList = MutableStateFlow<GetAllCharacters>(GetAllCharacters() )
+    val characterList : StateFlow<GetAllCharacters> =_characterList.asStateFlow()
+    private val  _toastMessage =MutableStateFlow<String ?>(null)
+    val toastMessage :StateFlow<String?> = _toastMessage
     private var state: ModelSate = LoadedModelState
 
     init {

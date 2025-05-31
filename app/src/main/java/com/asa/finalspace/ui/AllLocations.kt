@@ -34,15 +34,16 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.asa.finalspace.model.locations.GetAllLocationsItem
 import com.asa.finalspace.viewmodel.AllLocationsViewModel
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AllLocations(
-    viewModel: AllLocationsViewModel,
     modifier: Modifier = Modifier,
     onLocationClick: (GetAllLocationsItem) -> Unit
 ) {
+    val viewModel: AllLocationsViewModel = koinViewModel()
     val locationList by viewModel.locationsList.observeAsState(emptyList())
     println("AllLocations composable called, list size: ${locationList.size}")
 
