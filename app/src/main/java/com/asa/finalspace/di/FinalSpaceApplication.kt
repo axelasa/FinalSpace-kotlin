@@ -1,7 +1,6 @@
-package com.asa.finalspace.ui
+package com.asa.finalspace.di
 
 import android.app.Application
-import androidx.compose.runtime.Composable
 import com.asa.finalspace.network.HttpClient.allCharactersService
 import com.asa.finalspace.network.HttpClient.allEpisodesService
 import com.asa.finalspace.network.HttpClient.allLocationsService
@@ -36,7 +35,7 @@ val viewModelModule = module {
 }
 
 
-class FinalSpaceApplication(function: @Composable () -> Unit) : Application() {
+class FinalSpaceApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 

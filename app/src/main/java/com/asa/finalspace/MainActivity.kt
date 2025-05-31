@@ -30,29 +30,30 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.asa.finalspace.viewmodel.AllCharactersViewModel
 import coil.compose.AsyncImage
 import com.asa.finalspace.model.characters.GetAllCharactersItem
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.asa.finalspace.network.HttpClient.allEpisodesService
 import com.asa.finalspace.repository.AllEpisodesRepositoryImpl
 import com.asa.finalspace.routes.NavItems
@@ -61,12 +62,9 @@ import com.asa.finalspace.ui.AllEpisodes
 import com.asa.finalspace.ui.AllLocations
 import com.asa.finalspace.ui.CharacterDetails
 import com.asa.finalspace.ui.EpisodeDetails
-import com.asa.finalspace.ui.FinalSpaceApplication
 import com.asa.finalspace.ui.theme.FinalSpaceTheme
-import com.asa.finalspace.viewmodel.AllCharactersViewModel
 import com.asa.finalspace.viewmodel.AllEpisodesViewModel
 import org.koin.androidx.compose.koinViewModel
-
 class MainActivity : ComponentActivity() {
     //private late init var allCharactersViewModel: AllCharactersViewModel
 
@@ -84,13 +82,13 @@ class MainActivity : ComponentActivity() {
 //            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         //}
 
+
         setContent {
             FinalSpaceTheme {
-             FinalSpaceApplication {
                  Scaffold(modifier = Modifier.fillMaxSize()) {
                      AppNavigation()
                  }
-             }
+
 
             }
         }
